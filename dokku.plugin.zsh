@@ -6,34 +6,32 @@ function dokku {
 	emulate -L zsh
 	local app
 	local cmd=$1
-	local remote
-	local init
+	local remote=dokku@$DOKKU_HOST
+	local init=0
 
 	if [[ ! -z $cmd ]]; then
 		shift
 	fi
 
 	if git status 2>/dev/null >/dev/null; then
-		remote=$(git remote -v | grep -Po 'dokku@[a-zA-Z0-9:.-]+' | head -n 1)
+		gitremote=$(git remote -v | grep -Po 'dokku@[a-zA-Z0-9:.-]+' | head -n 1)
 
-		if [[ ! -z $remote ]]; then
-			app=${remote##*:}
-			remote=${remote%:*}
-			init=0
+		if [[ ! -z $gitremote ]]; then
+			app=${gitremote##*:}
+			remote=${gitremote%:*}
+			init=1
 		else
 			app=$(basename $(git rev-parse --show-toplevel))
-			remote=dokku@$DOKKU_HOST
-			init=1
 		fi
 	fi
 
 	if [[ $cmd == 'init' ]]; then
-		if [[ $init = 1 ]]; then
+		if [[ $init = 0 ]]; then
 			-dokku-init $remote
 		else
 			print 'Dokku remote exists.'
 		fi
-	elif [[ ! -z $cmd && ! -z $(_dokku-ssh help | grep -Po "$cmd <app>") ]]; then
+	elif [[ $init = 1 && ! -z $app && ! -z $cmd && ! -z $(_dokku-ssh help | grep -Po "$cmd <app>") ]]; then
 		_dokku-ssh $cmd $app $@
 	else
 		_dokku-ssh $cmd $@
