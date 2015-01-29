@@ -38,7 +38,7 @@ function dokku {
 		else
 			print 'Dokku remote exists.'
 		fi
-	elif [[ $init = 1 && ! -z $app && ! -z $cmd && ! -z ${${DOKKU_COMMANDS[$host]}[(r)$cmd]} ]]; then
+	elif [[ $init == 1 && ! -z $app && ! -z $cmd && ! -z ${${DOKKU_COMMANDS[$host]}[(r)$cmd]} ]]; then
 		_dokku-ssh $cmd $app $@
 	else
 		_dokku-ssh $cmd $@
