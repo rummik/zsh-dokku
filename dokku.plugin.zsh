@@ -1,11 +1,11 @@
 #!/bin/zsh
 
 DOKKU_HOST=app.9k1.us
-typeset -A DOKKU_COMMANDS
+typeset -Ag DOKKU_COMMANDS
 
 function dokku {
 	emulate -L zsh
-	local app
+	local app gitremote
 	local cmd=${1:-help}
 	local remote=dokku@$DOKKU_HOST
 	local init=0
