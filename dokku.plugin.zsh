@@ -16,7 +16,7 @@ function dokku {
 	fi
 
 	if git status 2>/dev/null >/dev/null; then
-		gitremote=$(git remote -v | grep -Po 'dokku@[a-zA-Z0-9:.-]+' | head -n 1)
+		gitremote=$(git remote -v | grep -Po 'dokku@[a-zA-Z0-9:_.-]+' | head -n 1)
 
 		if [[ ! -z $gitremote ]]; then
 			app=${gitremote##*:}
