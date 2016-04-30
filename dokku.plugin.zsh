@@ -16,7 +16,7 @@ function dokku {
 	fi
 
 	if git status 2>/dev/null >/dev/null; then
-		gitremote=$(git remote -v | grep -Po 'dokku@[a-zA-Z0-9:_.-]+' | head -n 1)
+		gitremote=$(git remote -v | grep -Pom1 '(?<=^dokku\t)\S+(?=\s\(fetch\))')
 
 		if [[ ! -z $gitremote ]]; then
 			app=${gitremote##*:}
@@ -46,11 +46,11 @@ function dokku {
 }
 
 function _dokku-ssh {
-	ssh -t $remote $@
+	ssh -t $remote -- $@
 }
 
 function _dokku-reload-commands {
-	DOKKU_COMMANDS[$host]=$(_dokku-ssh | tail -n +3 | grep -Po '[^ ]+(?= <app>)')
+	DOKKU_COMMANDS[$host]=$(_dokku-ssh help --all | grep -Po '(?<=^    )[^ ]+(?= .?<app>)')
 }
 
 function -dokku-init {
